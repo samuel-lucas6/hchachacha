@@ -1,6 +1,8 @@
 # HChaChaCha
 HChaChaCha is a family of block ciphers built from [HChaCha20](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-xchacha#section-2.2) for use in the [PACT/comPACT](https://eprint.iacr.org/2024/1382) and [SC](https://eprint.iacr.org/2024/875) transforms for AEAD commitment. The motivation being that ChaCha20-Poly1305 users likely don't want to use AES for commitment.
 
+The naming structure is `HChaChaCha` followed by the block size in bits (e.g., `128`) and the first letter of the name of the underlying structure in lowercase (e.g., `f` for Feistel).
+
 > [!CAUTION]
 > These are experimental constructions that have not been peer reviewed. I have also not done a proper literature review. Therefore, they **MUST NOT** be used in production.
 
@@ -28,8 +30,8 @@ DefaultJob : .NET 8.0.10 (8.0.1024.46610), X64 RyuJIT AVX2
 | ------------------------------------------------------------ | ---------: | ------: | ------: | -----------: | ------: |
 | AES-256                                                      |   684.6 ns | 3.76 ns | 3.14 ns |     baseline |         |
 | CTX with keyed BLAKE2b-256                                   |   285.3 ns | 0.28 ns | 0.25 ns | 2.40x faster |   0.01x |
-| HChaChaCha (balanced Feistel)                                | 2,607.8 ns | 1.08 ns | 0.90 ns | 3.81x slower |   0.02x |
-| HChaChaCha2 (Lai-Massey)                                     | 2,134.6 ns | 0.60 ns | 0.53 ns | 3.12x slower |   0.01x |
+| HChaChaCha128f (balanced Feistel)                            | 2,607.8 ns | 1.08 ns | 0.90 ns | 3.81x slower |   0.02x |
+| HChaChaCha128l (Lai-Massey)                                  | 2,134.6 ns | 0.60 ns | 0.53 ns | 3.12x slower |   0.01x |
 | HChaCha20 subkeys and whitening keys derivation (Feistel)    | 1,293.0 ns | 0.66 ns | 0.55 ns | 1.89x slower |   0.01x |
 | HChaCha20 subkeys and whitening keys derivation (Lai-Massey) | 1,006.3 ns | 0.55 ns | 0.48 ns | 1.47x slower |   0.01x |
 | ChaCha20 subkeys and whitening keys derivation (Feistel)     |   261.0 ns | 0.11 ns | 0.10 ns | 2.62x faster |   0.01x |
