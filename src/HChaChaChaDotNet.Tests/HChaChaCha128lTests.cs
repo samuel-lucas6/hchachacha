@@ -1,7 +1,7 @@
 namespace HChaChaChaDotNet.Tests;
 
 [TestClass]
-public class HChaChaCha2Tests
+public class HChaChaCha128lTests
 {
     public static IEnumerable<object[]> TestVectors()
     {
@@ -27,12 +27,12 @@ public class HChaChaCha2Tests
 
     public static IEnumerable<object[]> InvalidParameterSizes()
     {
-        yield return [ HChaChaCha2.BlockSize + 1, HChaChaCha2.BlockSize, HChaChaCha2.KeySize ];
-        yield return [ HChaChaCha2.BlockSize - 1, HChaChaCha2.BlockSize, HChaChaCha2.KeySize ];
-        yield return [ HChaChaCha2.BlockSize, HChaChaCha2.BlockSize + 1, HChaChaCha2.KeySize ];
-        yield return [ HChaChaCha2.BlockSize, HChaChaCha2.BlockSize - 1, HChaChaCha2.KeySize ];
-        yield return [ HChaChaCha2.BlockSize, HChaChaCha2.BlockSize, HChaChaCha2.KeySize + 1 ];
-        yield return [ HChaChaCha2.BlockSize, HChaChaCha2.BlockSize, HChaChaCha2.KeySize - 1 ];
+        yield return [ HChaChaCha128l.BlockSize + 1, HChaChaCha128l.BlockSize, HChaChaCha128l.KeySize ];
+        yield return [ HChaChaCha128l.BlockSize - 1, HChaChaCha128l.BlockSize, HChaChaCha128l.KeySize ];
+        yield return [ HChaChaCha128l.BlockSize, HChaChaCha128l.BlockSize + 1, HChaChaCha128l.KeySize ];
+        yield return [ HChaChaCha128l.BlockSize, HChaChaCha128l.BlockSize - 1, HChaChaCha128l.KeySize ];
+        yield return [ HChaChaCha128l.BlockSize, HChaChaCha128l.BlockSize, HChaChaCha128l.KeySize + 1 ];
+        yield return [ HChaChaCha128l.BlockSize, HChaChaCha128l.BlockSize, HChaChaCha128l.KeySize - 1 ];
     }
 
     [TestMethod]
@@ -43,7 +43,7 @@ public class HChaChaCha2Tests
         Span<byte> p = Convert.FromHexString(plaintext);
         Span<byte> k = Convert.FromHexString(key);
 
-        HChaChaCha2.Encrypt(c, p, k);
+        HChaChaCha128l.Encrypt(c, p, k);
 
         Assert.AreEqual(ciphertext, Convert.ToHexString(c).ToLower());
     }
@@ -56,7 +56,7 @@ public class HChaChaCha2Tests
         var p = new byte[plaintextSize];
         var k = new byte[keySize];
 
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => HChaChaCha2.Encrypt(c, p, k));
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() => HChaChaCha128l.Encrypt(c, p, k));
     }
 
     [TestMethod]
@@ -67,7 +67,7 @@ public class HChaChaCha2Tests
         Span<byte> c = Convert.FromHexString(ciphertext);
         Span<byte> k = Convert.FromHexString(key);
 
-        HChaChaCha2.Decrypt(p, c, k);
+        HChaChaCha128l.Decrypt(p, c, k);
 
         Assert.AreEqual(plaintext, Convert.ToHexString(p).ToLower());
     }
@@ -80,6 +80,6 @@ public class HChaChaCha2Tests
         var c = new byte[ciphertextSize];
         var k = new byte[keySize];
 
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => HChaChaCha2.Decrypt(p, c, k));
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() => HChaChaCha128l.Decrypt(p, c, k));
     }
 }

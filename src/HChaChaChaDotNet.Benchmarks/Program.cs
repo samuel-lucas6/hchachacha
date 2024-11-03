@@ -8,9 +8,9 @@ namespace HChaChaChaDotNet.Benchmarks;
 [Config(typeof(Configuration))]
 public class Program
 {
-    private readonly byte[] _ciphertext = new byte[HChaChaCha.BlockSize];
-    private readonly byte[] _plaintext = new byte[HChaChaCha.BlockSize];
-    private readonly byte[] _key = new byte[HChaChaCha.KeySize];
+    private readonly byte[] _ciphertext = new byte[HChaChaCha128f.BlockSize];
+    private readonly byte[] _plaintext = new byte[HChaChaCha128f.BlockSize];
+    private readonly byte[] _key = new byte[HChaChaCha128f.KeySize];
     private readonly byte[] _output = new byte[HChaCha20.OutputSize];
     private readonly byte[] _nonce = new byte[ChaCha20.NonceSize];
     private readonly byte[] _feistelRoundKeys = new byte[HChaCha20.KeySize * 9];
@@ -26,15 +26,24 @@ public class Program
         RandomNumberGenerator.Fill(_tag);
     }
 
-    [Benchmark(Description = "AES-256", Baseline = true)]
-    public void RunAes256()
+    [Benchmark(Description = "AES-256 (EncryptEcb)", Baseline = true)]
+    public void RunAes256EncryptEcb()
     {
         using var aes = Aes.Create();
         aes.Key = _key;
         aes.EncryptEcb(_plaintext, _ciphertext, PaddingMode.None);
     }
 
-    [Benchmark(Description = "CTX with keyed BLAKE2b-256")]
+    [Benchmark(Description = "AES-256 (TransformBlock)")]
+    public void RunAes256TransformBlock()
+    {
+        using var aes = Aes.Create();
+        aes.Mode = CipherMode.ECB;
+        using var encryptor = aes.CreateEncryptor(_key, rgbIV: null);
+        encryptor.TransformBlock(_plaintext, inputOffset: 0, _plaintext.Length, _ciphertext, outputOffset: 0);
+    }
+
+    [Benchmark(Description = "CTX (keyed BLAKE2b-256)")]
     public void RunCtx()
     {
         using var blake2b = new IncrementalBLAKE2b(_output.Length, _key);
@@ -45,16 +54,16 @@ public class Program
         blake2b.Finalize(_output);
     }
 
-    [Benchmark(Description = "HChaChaCha (balanced Feistel)")]
-    public void RunHChaChaCha()
+    [Benchmark(Description = "HChaChaCha128f (balanced Feistel)")]
+    public void RunHChaChaCha128f()
     {
-        HChaChaCha.Encrypt(_ciphertext, _plaintext, _key);
+        HChaChaCha128f.Encrypt(_ciphertext, _plaintext, _key);
     }
 
-    [Benchmark(Description = "HChaChaCha2 (Lai-Massey)")]
-    public void RunHChaChaCha2()
+    [Benchmark(Description = "HChaChaCha128l (Lai-Massey)")]
+    public void RunHChaChaCha128l()
     {
-        HChaChaCha2.Encrypt(_ciphertext, _plaintext, _key);
+        HChaChaCha128l.Encrypt(_ciphertext, _plaintext, _key);
     }
 
     [Benchmark(Description = "HChaCha20 subkeys and whitening keys derivation (Feistel)")]

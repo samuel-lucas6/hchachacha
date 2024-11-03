@@ -3,7 +3,7 @@ using Geralt;
 
 namespace HChaChaChaDotNet;
 
-public static class HChaChaCha2
+public static class HChaChaCha128l
 {
     public const int KeySize = 32;
     public const int BlockSize = 16;
